@@ -186,4 +186,12 @@ Djoser= {
 
 AUTH_USER_MODEL = "accounts.User"
 
-CORS_ALLOWED_ORIGINS = os.environ.get('ALLOWED_ORIGINS').split(',')
+if DEBUG:
+    CORS_ALLOWED_ORIGINS = [
+        "http://localhost:3000",
+    ]
+else:
+    # Populates via string arrays like "https://vercel.app,https://littlelemon.com" on Render
+    cors_env = os.environ.get("ALLOWED_ORIGINS", "")
+    CORS_ALLOWED_ORIGINS = [origin.strip() for origin in cors_env.split(",") if origin.strip()] if cors_env else []
+
