@@ -57,6 +57,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -88,7 +89,7 @@ WSGI_APPLICATION = 'LoaftApi.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-tmpPostgres = urlparse(os.environ.get("DATABASE_URL"))
+tmpPostgres = ""
 
 
 databse = {
@@ -96,6 +97,7 @@ databse = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 if not DEBUG:
+    tmpPostgres =urlparse(os.environ.get("DATABASE_URL"))
     databse =  {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': tmpPostgres.path.replace('/', ''),
