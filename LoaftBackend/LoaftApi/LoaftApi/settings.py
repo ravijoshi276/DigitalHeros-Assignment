@@ -31,6 +31,16 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 DEBUG = True
 
 ALLOWED_HOSTS = []
+#  Host Management
+ALLOWED_HOSTS = []
+
+if DEBUG:
+    ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'little-lemon-backend-afqk.onrender.com']
+else:
+    render_host = os.environ.get('ALLOWED_HOSTS')
+    if render_host:
+        ALLOWED_HOSTS.extend(render_host.split(","))
+
 
 
 # Application definition
