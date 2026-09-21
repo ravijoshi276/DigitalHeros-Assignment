@@ -29,8 +29,8 @@ export default function LandingPage() {
   const [currentDraw, setCurrentDraw] = useState(null);
 
   useEffect(() => {
-    client.get('/charities/featured/').then(r => setCharities(r.data.results ?? r.data)).catch(() => {});
-    client.get('/draws/current/').then(r => setCurrentDraw(r.data)).catch(() => {});
+    client.get('/charities/featured/',{ skipAuthRedirect: true }).then(r => setCharities(r.data.results ?? r.data)).catch(() => {});
+    client.get('/draws/current/',{ skipAuthRedirect: true }).then(r => setCurrentDraw(r.data)).catch(() => {});
   }, []);
 
   return (
