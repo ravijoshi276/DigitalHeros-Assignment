@@ -5,9 +5,6 @@ set -o errexit
 echo "Installing dependencies..."
 pip install -r requirements.txt
 
-# Step into the exact directory containing your manage.py
-cd LoaftBackend/LoaftApi
-
 echo "Collecting static files..."
 python manage.py collectstatic --noinput
 
