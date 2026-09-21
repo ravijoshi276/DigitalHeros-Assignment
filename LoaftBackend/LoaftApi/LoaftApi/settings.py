@@ -39,8 +39,8 @@ if DEBUG:
 else:
     render_host = os.environ.get('ALLOWED_HOSTS')
     if render_host:
-        ALLOWED_HOSTS.append(render_host.split(","))
-        ALLOWED_HOSTS.append(f"www.{ALLOWED_HOSTS}")
+        ALLOWED_HOSTS.append(render_host)
+        ALLOWED_HOSTS.append(f"www.{render_host}")
 
 
 # Application definition
