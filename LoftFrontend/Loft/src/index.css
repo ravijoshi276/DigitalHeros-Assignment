@@ -1,0 +1,413 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   DESIGN TOKENS
+   ==========================================================================
+   Single source of truth for the application's visual theme.
+
+   To retheme the entire application, change values ONLY in this :root block.
+   Tailwind utilities below reference these variables through @theme.
+   ========================================================================== */
+
+:root {
+  /* ------------------------------------------------------------------------
+     Backgrounds
+     ------------------------------------------------------------------------ */
+  --bg-base: #050908;
+  --bg-surface: #0d1712;
+  --bg-raised: #162219;
+
+  /* ------------------------------------------------------------------------
+     Brand
+     ------------------------------------------------------------------------ */
+  --color-primary: #22c55e;
+  --color-primary-dark: #16a34a;
+  --color-primary-faint: #052e10;
+
+  /* ------------------------------------------------------------------------
+     Accent
+     ------------------------------------------------------------------------ */
+  --color-accent: #fbbf24;
+  --color-accent-dark: #d97706;
+
+  /* ------------------------------------------------------------------------
+     Borders
+     ------------------------------------------------------------------------ */
+  --border-subtle: #1a2e22;
+  --border-default: #2a4535;
+
+  /* ------------------------------------------------------------------------
+     Typography
+     ------------------------------------------------------------------------ */
+  --text-primary: #f0f7f2;
+  --text-muted: #7aaa8a;
+  --text-faint: #4a7a5a;
+
+  /* ------------------------------------------------------------------------
+     Status
+     ------------------------------------------------------------------------ */
+  --color-success: #4ade80;
+  --color-warning: #fbbf24;
+  --color-danger: #f87171;
+  --color-info: #60a5fa;
+
+  /* ------------------------------------------------------------------------
+     Effects
+     ------------------------------------------------------------------------ */
+  --shadow-color: rgba(0, 0, 0, 0.35);
+  --focus-ring: rgba(34, 197, 94, 0.25);
+}
+
+
+/* ==========================================================================
+   TAILWIND THEME
+   ==========================================================================
+   These variables generate Tailwind utility classes.
+
+   Examples:
+     bg-bg-base
+     bg-bg-surface
+     bg-bg-raised
+
+     bg-brand
+     bg-brand-dark
+     bg-brand-faint
+
+     text-ink
+     text-ink-muted
+     text-ink-faint
+
+     border-line
+     border-line-subtle
+
+     text-status-success
+     text-status-danger
+
+     font-heading
+     font-body
+
+     animate-fade-in
+     animate-slide-up
+     animate-pulse-slow
+   ========================================================================== */
+
+@theme {
+  /* ------------------------------------------------------------------------
+     Backgrounds
+     ------------------------------------------------------------------------ */
+  --color-bg-base: var(--bg-base);
+  --color-bg-surface: var(--bg-surface);
+  --color-bg-raised: var(--bg-raised);
+
+  /* ------------------------------------------------------------------------
+     Brand
+     ------------------------------------------------------------------------ */
+  --color-brand: var(--color-primary);
+  --color-brand-dark: var(--color-primary-dark);
+  --color-brand-faint: var(--color-primary-faint);
+
+  /* ------------------------------------------------------------------------
+     Accent
+     ------------------------------------------------------------------------ */
+  --color-accent: var(--color-accent);
+  --color-accent-dark: var(--color-accent-dark);
+
+  /* ------------------------------------------------------------------------
+     Text
+     ------------------------------------------------------------------------ */
+  --color-ink: var(--text-primary);
+  --color-ink-muted: var(--text-muted);
+  --color-ink-faint: var(--text-faint);
+
+  /* ------------------------------------------------------------------------
+     Borders
+     ------------------------------------------------------------------------ */
+  --color-line: var(--border-default);
+  --color-line-subtle: var(--border-subtle);
+
+  /* ------------------------------------------------------------------------
+     Status
+     ------------------------------------------------------------------------ */
+  --color-status-success: var(--color-success);
+  --color-status-warning: var(--color-warning);
+  --color-status-danger: var(--color-danger);
+  --color-status-info: var(--color-info);
+
+  /* ------------------------------------------------------------------------
+     Fonts
+     ------------------------------------------------------------------------ */
+  --font-heading: "Space Grotesk", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+
+  /* ------------------------------------------------------------------------
+     Animations
+     ------------------------------------------------------------------------ */
+  --animate-fade-in: fadeIn 0.4s ease-out;
+  --animate-slide-up: slideUp 0.4s ease-out;
+  --animate-pulse-slow: pulse 3s ease-in-out infinite;
+
+  /* ------------------------------------------------------------------------
+     Keyframes
+     ------------------------------------------------------------------------ */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+
+/* ==========================================================================
+   BASE
+   ========================================================================== */
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    min-width: 320px;
+    scroll-behavior: smooth;
+    background-color: var(--bg-base);
+  }
+
+  body {
+    min-width: 320px;
+    min-height: 100vh;
+    margin: 0;
+
+    background-color: var(--bg-base);
+    color: var(--text-primary);
+
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.6;
+
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    text-rendering: optimizeLegibility;
+  }
+
+  #root {
+    min-height: 100vh;
+  }
+
+  /* ------------------------------------------------------------------------
+     Headings
+     ------------------------------------------------------------------------ */
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin: 0;
+
+    font-family: var(--font-heading);
+    font-weight: 600;
+    line-height: 1.2;
+
+    color: var(--text-primary);
+  }
+
+  /* ------------------------------------------------------------------------
+     Links
+     ------------------------------------------------------------------------ */
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* ------------------------------------------------------------------------
+     Form controls
+     ------------------------------------------------------------------------ */
+
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  input:disabled,
+  textarea:disabled,
+  select:disabled {
+    cursor: not-allowed;
+  }
+
+  /* ------------------------------------------------------------------------
+     Images
+     ------------------------------------------------------------------------ */
+
+  img,
+  svg,
+  video,
+  canvas {
+    display: block;
+    max-width: 100%;
+  }
+
+  img {
+    height: auto;
+  }
+
+  /* ------------------------------------------------------------------------
+     Selection
+     ------------------------------------------------------------------------ */
+
+  ::selection {
+    background-color: var(--color-primary);
+    color: #ffffff;
+  }
+
+  /* ------------------------------------------------------------------------
+     Focus
+     ------------------------------------------------------------------------ */
+
+  :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  /* ------------------------------------------------------------------------
+     Reduced motion
+     ------------------------------------------------------------------------ */
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+
+/* ==========================================================================
+   CUSTOM UTILITIES
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Glassmorphism
+   -------------------------------------------------------------------------- */
+
+@utility glass {
+  background: rgb(13 23 18 / 70%);
+  border: 1px solid var(--border-subtle);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+
+/* --------------------------------------------------------------------------
+   Brand focus glow
+   -------------------------------------------------------------------------- */
+
+@utility glow-brand {
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--focus-ring);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--focus-ring);
+  }
+}
+
+
+/* --------------------------------------------------------------------------
+   Gradient text
+   -------------------------------------------------------------------------- */
+
+@utility text-gradient {
+  background: linear-gradient(
+    135deg,
+    var(--color-primary) 0%,
+    #a7f3d0 100%
+  );
+
+  -webkit-background-clip: text;
+  background-clip: text;
+
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+
+/* --------------------------------------------------------------------------
+   Divider
+   -------------------------------------------------------------------------- */
+
+@utility divider {
+  width: 100%;
+  height: 1px;
+
+  margin: 0;
+  padding: 0;
+
+  border: 0;
+  border-top: 1px solid var(--border-subtle);
+}
+
+
+/* --------------------------------------------------------------------------
+   Thin scrollbar
+   -------------------------------------------------------------------------- */
+
+@utility scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-default) var(--bg-surface);
+
+  &::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--bg-surface);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--border-default);
+    border-radius: 999px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: var(--color-primary-dark);
+  }
+}
