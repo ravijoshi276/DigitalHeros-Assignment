@@ -182,7 +182,7 @@ SIMPLE_JWT = {
 }
 
 #Configuring Djoser
-Djoser= {
+DJOSER= {
     "SET_PASSWORD_RETYPE":True,
     "LOGOUT_ON_PASSWORD_CHANGE":True,
     "LOGIN_FIELD": 'email',
