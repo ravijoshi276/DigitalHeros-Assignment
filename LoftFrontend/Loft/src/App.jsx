@@ -21,8 +21,8 @@ import WinningsPage  from './pages/dashboard/WinningsPage';
 import AdminOverviewPage   from './pages/admin/AdminOverviewPage';
 import AdminUsersPage      from './pages/admin/AdminUsersPage';
 import AdminDrawsPage      from './pages/admin/AdminDrawsPage';
-//import AdminCharitiesPage  from './pages/admin/AdminCharitiesPage';
-//import AdminWinnersPage    from './pages/admin/AdminWinnersPage';
+import AdminCharitiesPage  from './pages/admin/AdminCharitiesPage';
+import AdminWinnersPage    from './pages/admin/AdminWinnersPage';
 
 /* Wrap pages that need the sidebar shell */
 const App_ = ({ children }) => <AppLayout>{children}</AppLayout>;
@@ -52,9 +52,8 @@ export default function App() {
           <Route path="/admin"            element={<AdminRoute><Adm_><AdminOverviewPage  /></Adm_></AdminRoute>} />
           <Route path="/admin/users"      element={<AdminRoute><Adm_><AdminUsersPage     /></Adm_></AdminRoute>} />
           <Route path="/admin/draws"      element={<AdminRoute><Adm_><AdminDrawsPage     /></Adm_></AdminRoute>} />
-         {/*<Route path="/admin/charities"  element={<AdminRoute><Adm_><AdminCharitiesPage /></Adm_></AdminRoute>} />
-          <Route path="/admin/winners"    element={<AdminRoute><Adm_><AdminWinnersPage   /></Adm_></AdminRoute>} />*/}  
-
+         <Route path="/admin/charities"  element={<AdminRoute><Adm_><AdminCharitiesPage /></Adm_></AdminRoute>} />
+          <Route path="/admin/winners"    element={<AdminRoute><Adm_><AdminWinnersPage   /></Adm_></AdminRoute>} /> 
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
