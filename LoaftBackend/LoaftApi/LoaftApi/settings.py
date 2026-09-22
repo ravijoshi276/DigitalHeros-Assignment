@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/6.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
+from decimal import Decimal
 from datetime import timedelta
 from pathlib import Path
 import os
@@ -171,9 +172,11 @@ MIN_STORED_SCORES=1
 MAX_STORED_SCORES=45
 STABLEFORD_MIN=1
 STABLEFORD_MAX=45
-STRIPE_SECRET_KEY=""
-STRIPE_MONTHLY_PRICE_ID=0
-STRIPE_YEARLY_PRICE_ID=0
+STRIPE_SECRET_KEY=os.environ.get("STRIPE_SECRET_KEY")
+STRIPE_MONTHLY_PRICE_ID=os.environ.get("STRIPE_MONTHLY_PRICE_ID")
+STRIPE_YEARLY_PRICE_ID=os.environ.get("STRIPE_YEARLY_PRICE_ID")
+STRIPE_WEBHOOK_SECRET =os.environ.get("STRIPE_WEBHOOK_SECRET")
+
 #Access Token Expiers after 1 hour and Refresh Token after 1 day
 SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
@@ -189,20 +192,28 @@ DJOSER= {
     'SERIALIZERS': {
         'user_create_password_retyp': 'accounts.serializers.UserCreateSerializer',
         'user': 'accounts.serializers.UserSerializer',
-        'current_user': 'accounts.serializers.UserSerializerr',
+        'current_user': 'accounts.serializers.UserSerializer',
     }
 
 
 }
 
 AUTH_USER_MODEL = "accounts.User"
-
+CORS_ALLOWED_ORIGINS=[]
 if DEBUG:
     CORS_ALLOWED_ORIGINS = [
-        "http://localhost:3000",
+        "http://localhost:5173",
     ]
 else:
     # Populates via string arrays like "https://vercel.app,https://littlelemon.com" on Render
     cors_env = os.environ.get("ALLOWED_ORIGINS", "")
     CORS_ALLOWED_ORIGINS = [origin.strip() for origin in cors_env.split(",") if origin.strip()] if cors_env else []
 
+
+
+PRIZE_POOL_CONTRIBUTION_MONTHLY = Decimal(os.environ.get("PRIZE_POOL_CONTRIBUTION_MONTHLY", "6.00"))
+PRIZE_TIER_PERCENTAGES = {
+        "five_match" :40,
+            "four_match":   35,
+            "three_match" :25
+}

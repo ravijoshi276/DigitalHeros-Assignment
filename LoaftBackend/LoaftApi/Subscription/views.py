@@ -38,6 +38,19 @@ PRICE_TO_PLAN = {
 }
 
 
+from urllib.parse import urlparse
+from django.conf import settings
+from django.utils import timezone
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+import stripe
+
+# Assuming you imported your serializer and model here
+# from .serializers import CheckoutSessionSerializer
+# from .models import Subscription
+
 class CreateCheckoutSessionView(APIView):
     """
     POST /api/subscriptions/create-checkout/
@@ -50,6 +63,9 @@ class CreateCheckoutSessionView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
+        # Explicitly ensure the Stripe secret key is active
+        stripe.api_key = settings.STRIPE_SECRET_KEY
+
         serializer = CheckoutSessionSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
@@ -60,18 +76,40 @@ class CreateCheckoutSessionView(APIView):
             else settings.STRIPE_YEARLY_PRICE_ID
         )
         user = request.user
+        
+        # 1. Resolve Frontend Origin using Origin or Referer header
+        origin_header = request.META.get("HTTP_ORIGIN")
+        if not origin_header:
+            referer = request.META.get("HTTP_REFERER", "")
+            if referer:
+                parsed_url = urlparse(referer)
+                origin_header = f"{parsed_url.scheme}://{parsed_url.netloc}"
 
-        # Retrieve or create Stripe customer
-        customer_id = self._get_or_create_stripe_customer(user)
+        # 2. Check origin against the CORS whitelist array
+        if origin_header in settings.CORS_ALLOWED_ORIGINS:
+            frontend_url = origin_header
+        else:
+            # Fallback cleanly to your primary origin index element
+            frontend_url = settings.CORS_ALLOWED_ORIGINS[0]
 
+        # 3. Fetch or construct Customer ID safely
+        try:
+            customer_id = self._get_or_create_stripe_customer(user)
+        except stripe.error.StripeError as e:
+            return Response(
+                {"error": f"Failed to register Stripe Customer record: {str(e)}"},
+                status=status.HTTP_502_BAD_GATEWAY,
+            )
+
+        # 4. Fire the Checkout Session setup
         try:
             checkout_session = stripe.checkout.Session.create(
                 customer=customer_id,
                 payment_method_types=["card"],
                 line_items=[{"price": price_id, "quantity": 1}],
                 mode="subscription",
-                success_url=f"{settings.FRONTEND_URL}/dashboard?checkout=success",
-                cancel_url=f"{settings.FRONTEND_URL}/pricing?checkout=cancelled",
+                success_url=f"{frontend_url}/dashboard?checkout=success",
+                cancel_url=f"{frontend_url}/pricing?checkout=cancelled",
                 metadata={"user_id": str(user.id), "plan": plan},
             )
         except stripe.error.StripeError as e:
@@ -87,13 +125,19 @@ class CreateCheckoutSessionView(APIView):
         Reuse existing Stripe customer if we already created one for this user.
         Avoids duplicate customers in Stripe dashboard.
         """
+        # Ensure key is bound inside sub-calls too
+        stripe.api_key = settings.STRIPE_SECRET_KEY
+
         sub = getattr(user, "subscription", None)
         if sub and sub.stripe_customer_id:
             return sub.stripe_customer_id
 
+        # Safe attribute extraction fallback to prevent 500 errors on blank fields
+        name_str = getattr(user, "full_name", f"{user.first_name} {user.last_name}".strip())
+
         customer = stripe.Customer.create(
             email=user.email,
-            name=user.full_name,
+            name=name_str or user.email, # fallback to email if name is empty
             metadata={"user_id": str(user.id)},
         )
 
@@ -104,9 +148,11 @@ class CreateCheckoutSessionView(APIView):
                 "stripe_customer_id": customer.id,
                 "status": "incomplete",
                 "plan": "monthly",  # placeholder until webhook confirms
+                "updated_at": timezone.now(),
             },
         )
         return customer.id
+
 
 
 class StripeWebhookView(APIView):
@@ -293,7 +339,7 @@ class CustomerPortalView(APIView):
         try:
             portal_session = stripe.billing_portal.Session.create(
                 customer=sub.stripe_customer_id,
-                return_url=f"{settings.FRONTEND_URL}/dashboard",
+                return_url=f"{settings.ALLOWED_HOSTS}/dashboard",
             )
         except stripe.error.StripeError as e:
             return Response({"error": str(e)}, status=status.HTTP_502_BAD_GATEWAY)

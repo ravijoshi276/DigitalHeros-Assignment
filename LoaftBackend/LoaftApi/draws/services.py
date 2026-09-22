@@ -127,7 +127,7 @@ def run_draw(draw: Draw) -> dict:
         DrawEntry.objects.bulk_create(entries_to_create)
 
         # ── Step 6: Calculate per-winner amounts + create Winner rows ─────
-        from apps.winners.models import Winner
+        from winners.models import Winner
 
         winner_rows = []
         for tier_name, tier_winners in winners_by_tier.items():
@@ -210,7 +210,7 @@ def reset_draw(draw: Draw) -> None:
         raise ValueError("Only 'simulated' draws can be reset (not pending or published).")
 
     with transaction.atomic():
-        from apps.winners.models import Winner
+        from winners.models import Winner
         Winner.objects.filter(draw=draw).delete()
         DrawEntry.objects.filter(draw=draw).delete()
         draw.prize_tiers.all().delete()
